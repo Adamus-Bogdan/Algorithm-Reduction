@@ -20,6 +20,30 @@ $ sage main-FF.py
 ```
 Difference in execution time can be easily observed.
 
+## Notation
+
+In this file we assume that `n`-variable polynomial mapping is a list of `n` `n`-variable polynomials:
+```
+F = (F_1, F_2, ..., F_n)
+```
+Every such a polynomial is a sum of terms. Every term is product of monomial and coefficient. The every polynomial `F_i` is in the following form:
+```
+F_i = X_i + H_i
+```
+Where `H_i` is a zero polynomial or `n`-variable polynomial
+of lower degree (e.g. vanishing order) at least 2.
+We introduce the following notation:
+- `d_i` - lower degree of polynomial `H_i`
+- `D_i` - degree of polynomial `H_i`
+- `D = max D_i`
+- `d = min D`
+
+The algorithm obtains polynomial mapping 
+```
+G = (G_1, ... G_n)
+```
+which is list of `n` `n`-variable polynomials.
+
 
 # Bibliography
 
