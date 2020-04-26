@@ -24,7 +24,7 @@ if __name__ == '__main__':
         C = dicts_union(C, Dp)
 
     D = crt(C)
-    G = dict2map(crt(C), R)
+    G = dict2map(D, R)
     END = time()
     check_inversion(F, G, R)
     print("Time necessary to inverse mapping: {0}".format(END - BEGIN))
