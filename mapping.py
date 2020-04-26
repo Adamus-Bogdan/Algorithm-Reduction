@@ -1,3 +1,8 @@
+"""
+This file contains a definition of mapping used in example presented in the article:
+"Algorithm for studying polynomial maps and reductions modulo prime number"
+"""
+
 from sage.all import *
 
 R = PolynomialRing(QQ, ["X1", "X2", "X3", "X4"])

@@ -1,3 +1,6 @@
+"""
+This file contains full program which inverts the mapping using our base approach
+"""
 import sys
 from time import time
 from algorithm import algorithm
