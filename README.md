@@ -86,6 +86,42 @@ For this mapping our approach appeared to be more effective.
 
 One can check these results himself. One can also check our paper _Algorithm for studying polynomial maps and reductions modulo prime number_.
 
+# Summary
+
+The output from our scripts:
+
+```bash
+sage main-GB.py 1
+Time necessary to inverse mapping: 5.191296815872192
+(sage-sh) $ sage main-GB.py 2
+Time necessary to inverse mapping: 22.258273124694824
+(sage-sh) $ sage main-FF.py 1
+Time necessary to inverse 3-reduced mapping: 0.0
+Time necessary to inverse 5-reduced mapping: 110.29130840301514
+Time necessary to inverse 7-reduced mapping: 169.9867227077484
+Time necessary to inverse 11-reduced mapping: 328.91081261634827
+Time necessary to inverse 13-reduced mapping: 350.0380210876465
+Time necessary to inverse 17-reduced mapping: 335.9072127342224
+Time necessary to inverse 19-reduced mapping: 341.8735542297363
+Time necessary to inverse 23-reduced mapping: 400.78892397880554
+Time necessary to inverse mapping: 2037.9245624542236
+(sage-sh) $ sage main-FF.py 2
+Time necessary to inverse 3-reduced mapping: 0.0
+Time necessary to inverse 5-reduced mapping: 0.0060002803802490234
+Time necessary to inverse 7-reduced mapping: 0.0060002803802490234
+Time necessary to inverse 11-reduced mapping: 0.007000446319580078
+Time necessary to inverse 13-reduced mapping: 0.009000539779663086
+Time necessary to inverse 17-reduced mapping: 0.00800013542175293
+Time necessary to inverse 19-reduced mapping: 0.010000467300415039
+Time necessary to inverse 23-reduced mapping: 0.009000301361083984
+Time necessary to inverse mapping: 0.14900851249694824
+(sage-sh) $ sage main-QQ.py 1
+Time necessary to inverse mapping: 10145.549292325974
+(sage-sh) $ sage main-QQ.py 2
+Time necessary to inverse mapping: 0.029001951217651367
+
+```
+
 # Bibliography
 
 1. E. Adamus, P. Bogdan, T. Crespo and Z. Hajto, _An effective study of polynomial maps_, Journal of Algebra and Its Applications, Vol. 16, No. 08, 1750141 (2017)
