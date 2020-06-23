@@ -1,11 +1,11 @@
 # Algorithm for studying polynomial maps and reductions modulo prime number
 
-In article [[1]]() we described an algorithm for inverting polynomial mappings. In [[3]]() complexity of this algorithm was estimated. In [[3]]() some aspects of this algorithm's implementation were discussed. Implementation of this algorithm can be found in this repository, in file [`algorithm.py`](https://github.com/Adamus-Bogdan/Algorithm-Reduction/blob/master/algorithm.py). This implementation works for _Pascal finite_ and not _Pascal finite_ polynomial automorphism as well. Definition of _Pascal finite_ automorphisms can be found in [[2]]().
+In [[1]]() we described an algorithm for inverting polynomial mappings. In [[3]]() complexity of this algorithm was estimated and moreover some aspects of the algorithm's implementation were discussed. Implementation of this algorithm can be found in this repository, in file [`algorithm_abch.py`](https://github.com/Adamus-Bogdan/Algorithm-Reduction/blob/master/algorithm_abch.py). This implementation works for both _Pascal finite_ and not _Pascal finite_ polynomial automorphism. Definition of _Pascal finite_ automorphisms can be found in [[2]]().
 
-Article _Algorithm for studying polynomial maps and reductions modulo prime number_ contains description of some improvements of this algorithm and code in this repository ilustrates this improvmenents.
+In _Algorithm for studying polynomial maps and reductions modulo prime number_ we explore properties of the algorithm and the class of Pascal finite maps while using Segre homotopy and reductions modulo prime number.  Additionally in this repository we present our code which illustrates improvements mad in the proposed algorithm.
 
-The main idea is to use fact that calculations performed over finite fields are much better (they are faster and use less memory) than those performed over infinite fields. Idea is:
-1. to perform some reduction modulo some set of prime numbers
+We use fact that calculations performed over finite fields can be more effective (they are faster and use less memory) than those performed over fields of characteristic zero. We proceed as follows.
+1. perform reduction modulo some set of prime numbers
 2. inverse the reduced mappings using algorithm described in [[1]]()
 3. retrieve global inverse using Chinese Reminder Theorem.
 
@@ -36,7 +36,7 @@ We introduce the following notation:
 - `d_i` - lower degree of polynomial `H_i`
 - `D_i` - degree of polynomial `H_i`
 - `D = max D_i`
-- `d = min D`
+- `d = min d_i`
 
 The algorithm obtains polynomial mapping 
 ```
@@ -44,9 +44,51 @@ G = (G_1, ... G_n)
 ```
 which is list of `n` `n`-variable polynomials.
 
+# Comparison
+
+We compare our algorithm to algorithm based on Groebner basis described in [[4]](). 
+Implementation of that algorithm can be found in [`algorithm_gb.py`](https://github.com/Adamus-Bogdan/Algorithm-Reduction/blob/master/algorithm_gb.py). 
+One can run this algorithm using script [`main-GB.py`](https://github.com/Adamus-Bogdan/Algorithm-Reduction/blob/master/main-GB.py).
+
+## Mapping 1
+
+We compare time of calculating inverse mapping for two mappings using our improved approach and standard Groebner basis method.
+
+We run program using our approach for the same mapping we used in previous comparison
+
+```bash
+$ sage main-FF.py 1
+```
+
+Then we run the program using Groebner basis algorithm for the same mapping:
+
+```bash
+$ sage main-GB.py 1
+```
+
+It appeared that the second program was being executing faster.
+
+## Mapping 2
+
+We run the same programs for the other mapping 
+
+```bash
+$ sage main-FF.py 2
+```
+
+and
+
+```bash
+$ sage main-GB.py 2
+```
+
+For this mapping our approach appeared to be more effective. 
+
+One can check these results himself. One can also check our paper _Algorithm for studying polynomial maps and reductions modulo prime number_.
 
 # Bibliography
 
 1. E. Adamus, P. Bogdan, T. Crespo and Z. Hajto, _An effective study of polynomial maps_, Journal of Algebra and Its Applications, Vol. 16, No. 08, 1750141 (2017)
 2. E. Adamus, P. Bogdan, T. Crespo and Z. Hajto, _Pascal finite polynomial automorphisms_, Journal of Algebra and Its Applications, Vol. 18, No. 07, 1950124 (2019)
 3. P. Bogdan, _Complexity of the inversion algorithm of polynomial mappings_, Schedae Informaticae, 2016, Volume 25, pages 209–225
+4. A. van den Essen, _Polynomial Automorphisms and the Jacobian Conjecture_, Progress in Mathematics, 2000th Edition 

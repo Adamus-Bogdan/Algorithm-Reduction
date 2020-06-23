@@ -1,11 +1,11 @@
 """
-This file contains full program which inverts the mapping using our base approach
+This file contains full program which inverts the mapping using 
+Groebner basis method
 """
 import sys
 from time import time
-from algorithm_abch import algorithm
+from algorithm_gb import algorithm
 from utils import check_inversion
-
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
@@ -19,7 +19,6 @@ if __name__ == '__main__':
     else:
         # by default
         from mapping_1 import F, R
-
     begin = time()
     G = algorithm(F, R, False)
     end = time()

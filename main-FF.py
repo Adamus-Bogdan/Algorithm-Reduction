@@ -3,13 +3,24 @@ This file contains program which inverts the mapping using our improved approach
 """
 import sys
 from time import time
-from algorithm import algorithm
+from algorithm_abch import algorithm
 from crt import map2dict, dict2map, dicts_union, crt
 from reduction import reduce_mapping, segre_homotopy
 from utils import check_inversion
-from simple_mapping import F, R
 
 if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '1':
+            from mapping_1 import F, R
+        elif sys.argv[1] == '2':
+            from mapping_2 import F, R
+        else:
+            # by default
+            from mapping_1 import F, R
+    else:
+        # by default
+        from mapping_1 import F, R
+
     BEGIN = time()
     # Step 1: clear denominators in input mapping F
     F = segre_homotopy(F, R, 3)
