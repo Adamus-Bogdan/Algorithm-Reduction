@@ -1,5 +1,5 @@
 """
-This file contains a definition of mapping used in example presented in the article:
+This file contains a definition of mapping used in example 17 in the article:
 "Algorithm for studying polynomial maps and reductions modulo prime number"
 """
 

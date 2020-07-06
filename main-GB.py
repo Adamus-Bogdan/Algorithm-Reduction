@@ -9,16 +9,15 @@ from utils import check_inversion
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
-        if sys.argv[1] == '1':
-            from mapping_1 import F, R
-        elif sys.argv[1] == '2':
-            from mapping_2 import F, R
+        if sys.argv[1] == 'F':
+            from mapping_F import F, R
+        elif sys.argv[1] == 'W':
+            from mapping_W import F, R
         else:
-            # by default
-            from mapping_1 import F, R
+            raise Exception("You need to provide which mapping you want to inverse")
     else:
-        # by default
-        from mapping_1 import F, R
+        raise Exception("You need to provide which mapping you want to inverse")
+        
     begin = time()
     G = algorithm(F, R, False)
     end = time()

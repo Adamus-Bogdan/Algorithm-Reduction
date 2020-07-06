@@ -1,5 +1,6 @@
 """
-This file contains a definition of mapping used during development procedure
+This file contains a definition of mapping used in example 18 in the article:
+"Algorithm for studying polynomial maps and reductions modulo prime number"
 """
 
 from sage.all import *
