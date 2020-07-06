@@ -2,7 +2,7 @@
 
 In [[1]]() we described an algorithm for inverting polynomial mappings. In [[3]]() complexity of this algorithm was estimated and moreover some aspects of the algorithm's implementation were discussed. Implementation of this algorithm can be found in this repository, in file [`algorithm_abch.py`](https://github.com/Adamus-Bogdan/Algorithm-Reduction/blob/master/algorithm_abch.py). This implementation works for both _Pascal finite_ and not _Pascal finite_ polynomial automorphism. Definition of _Pascal finite_ automorphisms can be found in [[2]]().
 
-In _Algorithm for studying polynomial maps and reductions modulo prime number_ we explore properties of the algorithm and the class of Pascal finite maps while using Segre homotopy and reductions modulo prime number.  Additionally in this repository we present our code which illustrates improvements mad in the proposed algorithm.
+In _Algorithm for studying polynomial maps and reductions modulo prime number_ we explore properties of the algorithm and the class of Pascal finite maps while using Segre homotopy and reductions modulo prime number.  Additionally in this repository we present our code which illustrates improvements made in the proposed algorithm.
 
 We use fact that calculations performed over finite fields can be more effective (they are faster and use less memory) than those performed over fields of characteristic zero. We proceed as follows.
 1. perform reduction modulo some set of prime numbers

@@ -1,5 +1,5 @@
 """
-This file contains at implementation of Groubner basis algorithm.
+This file contains at implementation of Groebner basis algorithm.
 See details in README.md file.
 """
 import sys
