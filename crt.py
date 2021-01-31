@@ -4,9 +4,10 @@ This file contains functions which are necessary to use Chinese Reminder Theorem
 import sys
 from sage.all import *
 from functools import reduce
+from tqdm import tqdm
 
 
-def map2dict(F, p=None):
+def map2dict(F, p=None, debug=True):
     """
     This function converts polynomial mapping F (defined as list of n polynomials) into dictionary.
     The keys in this dictionary are tuples (i, a) where
@@ -21,8 +22,14 @@ def map2dict(F, p=None):
     :return: Dictionary { (i, a) => [coefficient] } or dictionary { (i, a) => [(coefficient, p)] }
     """
     D = {}
-    for i, f in enumerate(F):
-        for k in f.dict():
+    l1 = enumerate(F)
+    if debug:
+        l1 = tqdm(l1)
+    for i, f in l1:
+        l2 = f.dict()
+        if debug:
+            l2 = tqdm(l2)
+        for k in l2:
             if p is None:
                 D[(i,k)] = [int(f.dict()[k])]
             else:

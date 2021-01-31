@@ -4,7 +4,7 @@ See details in README.md file.
 """
 import sys
 from sage.all import *
-from utils import print_mapping
+from tqdm import tqdm
 
 def powers(R, p):
     """
@@ -55,7 +55,7 @@ def change_ring(old_ring, new_ring, polynomial):
     x = [0]*len(new_ring.gens()) + list(new_ring.gens())
     return polynomial(x)
     
-def algorithm(F, R, debug=True):
+def algorithm(mapping, debug):
     """
     This function obtain an inverse of input polynomial mapping F
     param F: Polynomial mapping defined over ring R
@@ -64,7 +64,9 @@ def algorithm(F, R, debug=True):
     :return: polynomial mapping G = F^{-1}
     """
     if debug:
-        print_mapping(F)
+        print(str(mapping))
+    F = mapping.F
+    R = mapping.R
     # Step 1: create new polynomial ring with additional variables Y1, ..., Y_n
     old_names = [str(x) for x in R.gens()]
     new_names = ["Y{0}".format(i+1) for i in range(len(R.gens()))]
@@ -80,9 +82,11 @@ def algorithm(F, R, debug=True):
     
     # Step 4: find the Groebner basis of previously defined ideal
     B = I.groebner_basis()
-
+    if debug:
+        print("Groebner basis found")
     # Step 5: find inverse mapping polynomials in Groebner basis
     G = []
+    l1 = X
     for x in X:
         found = False
         for b in B:
@@ -94,7 +98,6 @@ def algorithm(F, R, debug=True):
                 G.append(change_ring(R1, R, g))
                 found = True
                 break
-        assert found == True
     return G
             
 

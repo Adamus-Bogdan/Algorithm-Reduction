@@ -6,7 +6,8 @@ See details in README.md file.
 """
 import sys
 from sage.all import *
-
+from time import time
+from tqdm import tqdm
 
 def get_terms(p):
     """
@@ -60,6 +61,16 @@ def find_degrees(F,R):
     return max_D, min_d, lower_degrees
 
 
+def substitute(p, F, R, deg_limit, debug):
+    result = 0
+    l = get_terms(p)
+    if debug:
+        l = tqdm(l)
+    for term in l:
+        result += term(F)
+    return filter_terms(result, deg_limit)
+
+
 def inverse_algorithm(F, R, i, debug):
     """
     This function obtain an inverse of i-th coordinate of input polynomial mapping F
@@ -90,8 +101,10 @@ def inverse_algorithm(F, R, i, debug):
         print('Maximum number of steps: {0}'.format(limit))
         print('Inversion degree boundary: {0}'.format(degree_limit))
     while True:
-        p -= p(F)
+        p -= substitute(p, F, R, degree_limit, debug)
+        #p -= filter_terms(p(F), degree_limit)
         result += p
+
         if p == 0:
             if debug:
                 print('P_{0} = 0'.format(step))
@@ -109,7 +122,7 @@ def inverse_algorithm(F, R, i, debug):
         step += 1
     
     
-def algorithm(F, R, debug=True):
+def algorithm(mapping, debug):
     """
     This function obtain an inverse of input polynomial mapping F
     param F: Polynomial mapping defined over ring R
@@ -117,10 +130,9 @@ def algorithm(F, R, debug=True):
     :param debug: flag if debug should be printed to standard output
     :return: polynomial mapping G = F^{-1}
     """
+    F = mapping.F
+    R = mapping.R
     if debug:
-        print('==================== Mapping ====================')
-        print(R)
-        for i in range(len(F)):
-            print('F_{0}  = {1}'.format(i+1, F[i]))
+        print(str(mapping))
     return [inverse_algorithm(F,R,i, debug) for i in range(len(F))]
 
