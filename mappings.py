@@ -8,6 +8,18 @@ from mapping import Mapping
 
 mappings = {}
 
+h = Mapping([
+    "X1",
+    "X2-(1/3)*X1^3",
+    "X2^2*X4*g4^2-X1*X2^2*e3+X1*X2*X3*g4-X2^3*k3+X2^2*X3*m4-X1^2*X2+X3",
+    "X4-X1^2*X3-e4*X1*X2^2-2*m4*X1*X2*X3/g4-g4*X1*X2*X4-k4*X2^3-m4^2*X2^2*X3/g4^2-m4*X2^2*X4"
+],
+    name="EX00",
+    params={"g4": "1", "e3": "1", "k3": "1", "m4": "1", "e4": "1", "k4": "1"},
+    r=3,
+    primes=[5, 7, 11, 13, 17, 19, 23])
+mappings[h.name] = h
+
 # Mapping presented in example 17 in the article
 # "Algorithm for studying polynomial maps and reductions modulo prime number"
 f = Mapping([
@@ -53,6 +65,7 @@ f = Mapping([
     r=1,
     primes=[3, 5, 7, 7103, 10937, 9461],
     imaginary=True,
+    field=GaussianIntegers().fraction_field(),
     params={
             "b1": "3", "b3": "2", "b4": "1", "b5": "1", "b7": "1",
             "f1": "5", "f3": "2", "f4": "1", "f7": "1",
@@ -63,3 +76,95 @@ f = Mapping([
 )
 mappings[f.name] = f
 
+R = PolynomialRing(GaussianIntegers().fraction_field(), ["X1", "X2", "X3", "X4", "X5", "X6", "X7"], 7)
+g3 = R("(((X4+I*X5)^2-(X6+I*X7)^2)*X1+(2*(X4+I*X5))*(X6+I*X7)*X2+I*((X4+I*X5)^2+(X6+I*X7)^2)*X3)^2")
+g5 = g3+R("(X6+I*X7)^5*X4")
+H = g5.gradient()
+F = [str(x + h) for x, h in zip(R.gens(), H)]
+g = Mapping(F, name="TEMP", field=R.base_ring(), primes=[3, 7, 11, 19, 23], imaginary=True)
+mappings[g.name] = g
+
+
+
+f = Mapping([
+    "X1 + (X8/6 + X9/6 + (2*X10)/3)^3",
+    "X2 + (X8/6 + X9/6 - (4*X10)/3)^3",
+    "X3 + (X8/6 + X9/6 - X10/3)^3",
+    "X4 + (-X1 + X10 + X11 + X12)^3",
+    "X5 + (X1 - X10 + X11 - X12)^3",
+    "X6 + (-X1 + X10 + X11 - X12)^3",
+    "X7 + (X1 - X10 + X11 + X12)^3",
+    "X8 + (X11 + X12)^3",
+    "X9 + (-X11 + X12)^3",
+    "X12^3 + X10",
+    "X10^3 + X11",
+    "X12"
+    ],
+    name="TERESA",
+    r = 6,
+    primes=[3,5,7,11] )
+mappings[f.name] = f
+
+
+ex00 = Mapping([
+    "X1",
+    "X2-(1/3)*X1^3",
+    "X2^2*X4*g4^2-X1*X2^2*e3+X1*X2*X3*g4-X2^3*k3+X2^2*X3*m4-X1^2*X2+X3",
+    "X4-X1^2*X3-e4*X1*X2^2-2*m4*X1*X2*X3/g4-g4*X1*X2*X4-k4*X2^3-m4^2*X2^2*X3/g4^2-m4*X2^2*X4",
+    ],
+    name="H8",
+    params={"g4": "1", "e3": "1", "k3": "1", "m4": "1", "e4": "1", "k4": "1"},
+    r=3,
+    primes=[5, 7, 11, 13, 17, 19, 23]
+)
+mappings[ex00.name] = ex00
+
+f = Mapping([
+    "X1 + (X3 + X9)^3",
+    "X2 + (-X3 + X9)^3",
+    "X9^3 + X3",
+    "X8^3 + X4",
+    "X5 + (1/6*X1 + 1/6*X2 + 2/3*X3)^3",
+    "X6 + (1/6*X1 + 1/6*X2 - 4/3*X3)^3",
+    "X7 + (1/6*X1 + 1/6*X2 - 1/3*X3)^3",
+    "X8",
+    "X9",
+    "X10 + (1/6*X5 + 1/6*X6 - 1/3*X7)^3"
+],
+    r=216,
+    primes=[3, 5, 7, 11, 13, 19],
+    name="DR01"
+)
+mappings[f.name] = f
+
+
+f = Mapping([
+    "X1",
+    "X2 + (X1 + X3 + X4 + X5 + X7)^3",
+    "X3",
+    "X4 + (X1 + X3 + X7)^3",
+    "X5 + (X1 + X3 + X7)^3",
+    "X6 + (X1 + X3 + X4 + X7)^3",
+    "X7",
+    "X8+(X1 + X3 + X4 + X5 + X7)^3"
+],
+    primes=[3, 5, 7, 11, 13, 19],
+    name="DR02"
+)
+mappings[f.name] = f
+
+
+f = Mapping([
+    "X1",
+    "X2 + (X1 + X3 + X4 + X5 + X7)^3",
+    "X3",
+    "X4 + (X1 + X3 + X7)^3",
+    "X5 + (X1 + X3 + X7)^3",
+    "X6 + (X1 + X3 + X4 + X7)^3",
+    "X7",
+    "X8+(X1 + X3 + X4 + X5 + X7)^3"
+],
+    primes=[3, 5, 7, 11, 13, 19],
+    name="DR03"
+)
+mappings[f.name] = f

@@ -123,7 +123,7 @@ def only_imaginary(n):
     return all((real(x) == 0 and imag(x) != 0) or (real(x) == 0 and imag(x) == 0) for x in n)
 
 
-def crt(D, R):
+def my_crt(D, R):
     """
     Function uses Chinese Reminder Theorem to obtain the result.
     For every monomial we have list of tuples (c_i, p_i) which satisfy the following system of congruences:

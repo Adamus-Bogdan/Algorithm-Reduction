@@ -58,7 +58,23 @@ def change_ring(old_ring, new_ring, polynomial):
     return polynomial(x)
 
 
-def algorithm(mapping, debug):
+def find_basis_sage(R, m):
+    ideal = R.ideal(m)
+    return ideal.groebner_basis()
+
+
+def find_basis_maple(R, X, Y, m, method=""):
+    ch = R.base_ring().characteristic()
+    command = f"Basis({m}, lexdeg([{X}],[{Y}])"
+    if ch != 0:
+        command += f", characteristic={ch}"
+    if method != "":
+        command += f", method={method}"
+    command += ")"
+    return [R(str(e)) for e in (maple(command)).sage()]
+    
+    
+def algorithm(mapping, debug, engine="sage", method=""):
     """
     This function obtain an inverse of input polynomial mapping F
     :param mapping: Object of mapping that needs to be inverted
@@ -76,23 +92,24 @@ def algorithm(mapping, debug):
     #         and "new ones" denoted by Y
     Y = R1.gens()[mapping.n:]
     X = R1.gens()[:mapping.n]
-
-    # Step 3: create ideal for polynomials with new variable added
-    ideal = R1.ideal([y - f for y, f in zip(Y, mapping.F)])
+    TEMP = [y - f for y, f in zip(Y, mapping.F)]
     
-    # Step 4: find the Groebner basis of previously defined ideal
-    B = ideal.groebner_basis()
+    # Step 3: find the Groebner basis
+    if engine == "maple":
+        B = find_basis_maple(R1, X, Y, TEMP, method)
+    elif engine == "sage":
+        B = find_basis_sage(R1, TEMP)
     if debug:
         print("Groebner basis found")
 
-    # Step 5: find inverse mapping polynomials in Groebner basis
+    # Step 4: find inverse mapping polynomials in Groebner basis
     G = []
     for x in X:
         found = False
         for b in B:
             if check(R1, b, x):
                 g = x - b
-                # Step 5.1: don't forget about changing ring
+                # Step 4.1: don't forget about changing ring
                 #           for calculated mapping
                 G.append(change_ring(R1, mapping.R, g))
                 found = True

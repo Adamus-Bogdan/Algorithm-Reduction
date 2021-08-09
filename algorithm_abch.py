@@ -147,7 +147,7 @@ def inverse_algorithm(mapping, x, substitute, debug):
         step += 1
     
     
-def algorithm(mapping, debug, parallel=False):
+def algorithm(mapping, debug, method, parallel=False):
     """
     This function obtain an inverse of input polynomial mapping F
     param F: Polynomial mapping defined over ring R

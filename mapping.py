@@ -2,7 +2,7 @@
 This file contains class describing multivariable polynomial mapping.
 """
 from sage.all import *
-
+import sys
 
 class Mapping:
     """
@@ -72,7 +72,8 @@ class Mapping:
         :return: This method doesn't return any value - it raises an exception if G is not an inverse of self
         """
         for g, x in zip(G.F, self.R.gens()):
-            assert g(self.F) == x
+            res = g(self.F)
+            assert res/x in CC
 
     def segre_homotopy(self):
         """

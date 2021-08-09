@@ -2,7 +2,7 @@
 This file contains description of 8 test_mappings described by Hubbers in his master's thesis. See [5] in README.md file
 """
 from mapping import Mapping
-from algorithms import algorithms
+from algorithms import algorithms, methods
 
 test_mappings = {}
 
@@ -102,7 +102,16 @@ h = Mapping([
     primes=[5, 7, 11, 13, 17, 19, 23])
 test_mappings[h.name] = h
 
-if __name__ == '__main__':
+def verify(debug=False):
     for al in algorithms:
-        for mapping in test_mappings:
-            algorithms[al](test_mappings[mapping], False)
+        for method in methods[al]:
+            if debug:
+                print(f"{al}({method})")
+            for mapping in test_mappings:
+                t = algorithms[al](test_mappings[mapping], False, True, method)
+                if debug:
+                    print(f"{mapping}: {t}")
+
+
+if __name__ == '__main__':
+    verify(True)
