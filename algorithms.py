@@ -67,7 +67,7 @@ def _algo_ff(*, mapping, debug, inversion_algorithm, results, **kwargs):
 
     # Step 3: Use Chinese Reminder Theory to obtain candidate for global inverse
     map_of_coefficients = fill_gaps(map_of_coefficients, mapping.primes)
-    resulting_map = my_crt(map_of_coefficients, mapping)
+    resulting_map = my_crt(map_of_coefficients)
     g = dict2map(resulting_map, destination_mapping)
     finish = time()
     

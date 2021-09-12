@@ -129,7 +129,7 @@ mappings[g.name] = g
 R2 = PolynomialRing(GaussianIntegers().fraction_field(), ["X1", "X2", "X3", "X4", "X5"], 5)
 g2 = R2("(((X4+I*X5)^2-1)*X1+(2*(X4+I*X5))*X2+I*((X4+I*X5)^2+1)*X3)*((2*(X4+I*X5))*X1-((X4+I*X5)^2-1)*X2)")
 H = g2.gradient()
-F = [x + h for x,h in zip(R2.gens(), H)]
+F = [x + h for x, h in zip(R2.gens(), H)]
 g = Mapping(F, name="B2", list_of_primes=[3, 7, 11, 19, 23], segre_constant=1, is_imaginary=True)
 mappings[g.name] = g
 
@@ -206,7 +206,7 @@ ex00 = Mapping.parse([
     name="EX19",
     is_imaginary=True,
     field=GaussianIntegers().fraction_field(),
-    list_of_primes=[530560207, 530560183, 5305600271, 265280063, 265279991])
+    list_of_primes=[5305600291, 530560207, 530560183, 5305600271])
 mappings[ex00.name] = ex00
 
 

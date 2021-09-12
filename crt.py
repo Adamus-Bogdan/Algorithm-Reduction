@@ -90,43 +90,7 @@ def dicts_union(a, b):
     return result
 
 
-# Extended Euclides Algorithm
-# this function was copied from:
-# https://ask.sagemath.org/question/44287/solving-systems-of-congruences-with-gaussian-integers/
-def extended_euclides(a, b, my_quo):
-    r0 = a
-    r1 = b
-    s0 = 1
-    s1 = 0
-    t0 = 0
-    t1 = 1
-
-    while r1 != 0:
-        q = my_quo(r0, r1)
-        r0, r1 = r1, r0 - q * r1
-        s0, s1 = s1, s0 - q * s1
-        t0, t1 = t1, t0 - q * t1
-
-    return r0, s0, t0
-
-
-# Chinese Reminder Theorem
-# this function was copied from:
-# https://ask.sagemath.org/question/44287/solving-systems-of-congruences-with-gaussian-integers/
-def chinese_remainder(remainders, modules, my_quo):
-    m = reduce(lambda x, y: x*y, modules)
-    c = 0
-    for v_i, m_i in zip(remainders, modules):
-        m_div_m_i = my_quo(m, m_i)
-        _, s_i, _ = extended_euclides(m_div_m_i, m_i, my_quo)
-        a = v_i * s_i; b = m_i
-        c_i = a - my_quo(a, b) * b
-
-        c += c_i * m_div_m_i
-    return c
-
-
-def my_crt(input_dictionary, mapping):
+def my_crt(input_dictionary):
     """
     Function uses Chinese Reminder Theorem to obtain the result.
     For every monomial we have list of tuples (c_i, p_i) which satisfy the following system of congruences:
@@ -137,7 +101,6 @@ def my_crt(input_dictionary, mapping):
     Chinese Reminder Theorem gives number c such that x = c mod (p_1p_2...p_k).
     It is our candidate for coefficient standing next to monomial a in polynomial F_i
     :param input_dictionary: Dictionary in form { (i, a) => [(c_1, p_1), (c_2, p_2), ..., (c_k, p_k)] }
-    :param mapping: polynomial ring of resulting mapping
     :return: Dictionary in form { (i, a) => c }
     """
     result = {}
@@ -146,23 +109,27 @@ def my_crt(input_dictionary, mapping):
         rems = [t[1] for t in input_dictionary[k]]
         prod_of_mods = reduce(lambda x, y: x*y, mods)
 
-        if mapping.imaginary:
-            def _quo(a, b):
-                return GaussianIntegers()(int(real(a/b)) + I*int(imag(a/b)))
+        temp1 = partial_crt(mods, prod_of_mods, rems, imag)
+        temp2 = partial_crt(mods, prod_of_mods, rems, real)
 
-            def _rem(a, b):
-                return a - _quo(a, b)*b
+        if temp1 == 0:
+            temp = ZZ(temp2)
         else:
-            def _quo(a, b):
-                return a//b
-
-            def _rem(a, b):
-                return a % b
-
-        temp = chinese_remainder(rems, mods, _quo)
-        temp = _rem(temp, prod_of_mods)
-        t1 = prod_of_mods - temp
-        if t1 < temp:
-            temp = -t1
+            temp = GaussianIntegers()(temp1*I + temp2)
         result[k] = temp
     return result
+
+
+def partial_crt(mods, prod_of_mods, rems, chooser):
+    inside_rems = [chooser(ir) for ir in rems]
+    if all(ir == 0 for ir in inside_rems):
+        return 0
+    temp = CRT(inside_rems, mods) % prod_of_mods
+    is_negative = temp < 0
+    temp = abs(temp)
+    t1 = prod_of_mods - temp
+    if t1 < temp:
+        temp = -t1
+    if is_negative:
+        temp *= -1
+    return temp
