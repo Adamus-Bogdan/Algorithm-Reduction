@@ -1,14 +1,8 @@
 """
 This file contains main program of this repository.
-The program gets the following arguments:
-- name of mapping to inverse - possible mappings are listed in mappings.py file
-- name of algorithm used to inverse - possible algorithms are listed in algorithms.py file
-  you can check README.md file as well
-- optional True if you want to have additional output, if not provided or different value provided
-  program will print only duration time of inverting
 """
-import sys
 import textwrap
+from datetime import datetime
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from mappings import mappings
 from algorithms import algorithms, maple_methods
@@ -53,6 +47,33 @@ if __name__ == '__main__':
             default='',
             required=False
     )
+    parser.add_argument(
+            "-o", "--output",
+            metavar="FILE",
+            nargs=1,
+            type=str,
+            help="Log file",
+            default="log.out",
+            required=False
+    )
+    parser.add_argument(
+            '-t', '--timeout',
+            metavar="SECONDS",
+            nargs=1,
+            type=int,
+            help="Timeout - how long algorithm works before it will be interrupted, default value is None - it means no limit",
+            default=None,
+            required=False
+    )
+    parser.add_argument(
+            '-r', '--memory',
+            metavar="MB",
+            nargs=1,
+            type=int,
+            help="Memory limit - how much memory can be utilized by calculations",
+            default=None,
+            required=False
+    )
 
     required = parser.add_argument_group('required named arguments')
     required.add_argument(
@@ -79,17 +100,39 @@ if __name__ == '__main__':
         parser.print_help()
     else:
         algorithm = algorithms[args.algorithm[0]]
-        mapping = mappings[args.mapping[0]]
+        with open(args.output, "a") as log_file:
+            mapping = mappings[args.mapping[0]]
+            begin = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            if len(args.method) > 0:
+                meth = args.method[0]
+            else:
+                meth = ""
+            
+            if args.timeout is None or len(args.timeout) == 0:
+                timeout = None
+            else:
+                timeout = args.timeout[0]
 
-        if args.jacobian:
-            mapping.check_jacobian()
+            if args.memory is None or len(args.memory) == 0:
+                memory_limit = None
+            else:
+                memory_limit = args.memory[0]
+            
+            result = algorithm(
+                    mapping=mapping, 
+                    debug=args.debug, 
+                    verify=args.verify, 
+                    method=meth, 
+                    check_jacobian=args.jacobian, 
+                    timeout=timeout, 
+                    memory_limit=memory_limit,
+                    params={"algorithm": args.algorithm[0], "mapping": args.mapping[0], "method": meth}
+            ) 
+            end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            msg = end + " " + str(result)
 
-        if len(args.method) > 0:
-            duration = algorithm(mapping, args.debug, args.verify, args.method[0])
-        else:
-            duration = algorithm(mapping, args.debug, args.verify, "")
-        if args.method == "":
-            print(f"Inversing map '{args.mapping[0]}' using algorithm '{args.algorithm[0]}' took {duration} s")
-        else:
-            print(f"Inversing map '{args.mapping[0]}' using algorithm '{args.algorithm[0]}' (method='{args.method}') took {duration} s")
+            print(msg)
+            log_file.write(msg + "\n")
 

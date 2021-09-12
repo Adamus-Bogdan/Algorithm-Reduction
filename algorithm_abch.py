@@ -4,9 +4,9 @@ Description of this algorithm can be found in article:
 "An effective study of polynomial maps"
 See details in README.md file.
 """
-import sys
+from concurrent.futures import ThreadPoolExecutor
+
 from tqdm import tqdm
-from functools import reduce
 from sage.all import *
 from mapping import Mapping
 
@@ -20,16 +20,15 @@ def get_terms(p):
     return [m*c for m,c in zip(p.monomials(), p.coefficients())]
 
 
-def filter_terms(p, R, degree_limit):
+def filter_terms(p, degree_limit):
     """
     This function gets the n-variable polynomial p and the number degree_limit
     and returns the polynomial which consists of terms of degree at most degree_limit
     :param p: n-variable polynomial
-    :param R: polynomial ring of n-variable polynomial p
     :param degree_limit: boundary for degree
     :return: n-variable polynomial with terms of degree at most limit
     """
-    for m, c in [(m,c) for m,c in zip(p.monomials(), p.coefficients()) if m.degree() > degree_limit]:
+    for m, c in [(m, c) for m, c in zip(p.monomials(), p.coefficients()) if m.degree() > degree_limit]:
         p -= m*c
     return p
 
@@ -42,22 +41,22 @@ def find_degrees(mapping):
     """
     # we put max int value as d parameter
     min_d = sys.maxsize
-    max_D = -1
+    max_d = -1
     lower_degrees = []
     for f, x in zip(mapping.F, mapping.R.gens()):
-        monomials = (f - x).monomials()
-        if len(monomials) == 0:
+        temp_monomials = (f - x).monomials()
+        if len(temp_monomials) == 0:
             lower_degrees.append(sys.maxsize)
         else:
-            temp_degrees = [m.degree() for m in monomials]
+            temp_degrees = [m.degree() for m in temp_monomials]
             d = min(temp_degrees)
             if d < min_d:
                 min_d = d
-            D = max(temp_degrees)
-            if D > max_D:
-                max_D = D
+            dd = max(temp_degrees)
+            if dd > max_d:
+                max_d = dd
             lower_degrees.append(d)
-    return max_D, min_d, lower_degrees
+    return max_d, min_d, lower_degrees
 
 
 def seq_substitute(p, mapping, degree_limit, debug):
@@ -77,7 +76,7 @@ def seq_substitute(p, mapping, degree_limit, debug):
         terms = tqdm(terms)
     for term in terms:
         temp = term(mapping.F)
-        result += filter_terms(temp, mapping.R, degree_limit)
+        result += filter_terms(temp, degree_limit)
     return result
 
 
@@ -95,8 +94,10 @@ def parallel_substitute(p, mapping, degree_limit, debug):
     terms = get_terms(p)
     if len(terms) < 20:
         return seq_substitute(p, mapping, degree_limit, debug)
-    S = RecursivelyEnumeratedSet(terms, lambda x: [], structure='forest', category=FiniteEnumeratedSets()) 
-    return S.map_reduce(lambda t: seq_substitute(t, mapping, degree_limit, debug), lambda a, b: a+b, mapping.R("0"))
+    executor = ThreadPoolExecutor(max_workers=12)
+    terms = executor.map(lambda t: t(mapping.F), terms)
+    terms = executor.map(lambda t: filter_terms(t, degree_limit), terms)
+    return reduce(lambda a, b: a+b, terms, mapping.R("0"))
 
 
 def inverse_algorithm(mapping, x, substitute, debug):
@@ -114,19 +115,19 @@ def inverse_algorithm(mapping, x, substitute, debug):
     p = x
     result = x
     step = 1
-    max_D, min_d, lower_degrees = find_degrees(mapping)
-    degree_limit = max_D**(mapping.n-1)
-    i = mapping.R.gens().index(x)
+    max_d, min_d, lower_degrees = find_degrees(mapping)
+    degree_limit = max_d**(mapping.n-1)
+    index = mapping.R.gens().index(x)
     if min_d > 1:
-        limit = floor((max_D**(mapping.n - 1) - lower_degrees[i])/(min_d - 1) + 1)+1
+        steps_limit = floor((max_d**(mapping.n - 1) - lower_degrees[index])/(min_d - 1) + 1)+1
     else:
-        limit = degree_limit
-    if lower_degrees[i] == sys.maxsize:
+        steps_limit = degree_limit
+    if lower_degrees[index] == sys.maxsize:
         if debug:
             print('There is no need to perform the algorithm')
         return x
     if debug:
-        print(f'Maximum number of steps: {limit}')
+        print(f'Maximum number of steps: {steps_limit}')
         print(f'Inversion degree boundary: {degree_limit}')
     while True:
         p -= substitute(p, mapping, degree_limit, debug)
@@ -140,35 +141,27 @@ def inverse_algorithm(mapping, x, substitute, debug):
             degrees = [m.degree() for m in p.monomials()]
             if debug:
                 print(f'P_{step} has degree: {max(degrees)}, ldegree: {min(degrees)}, length: {len(degrees)}')
-            if step == limit:
+            if step == steps_limit:
                 if debug:
                     print('NOT PASCAL FINITE!')
                 return result
         step += 1
     
     
-def algorithm(mapping, debug, method, parallel=False):
+def algorithm(*, mapping, debug, method):
     """
     This function obtain an inverse of input polynomial mapping F
     param F: Polynomial mapping defined over ring R
     :param mapping: object defining mapping to inverse
     :param debug: flag if debug should be printed to standard output
-    :param parallel: flag if algorithm should be run in parallel
+    :param method: which method algorithm should use (only acceptable method is 'parallel')
     :return: polynomial mapping G = F^{-1}
     """
     if debug:
         print(str(mapping))
-    if parallel:
+    if 'parallel' == method:
         subs = parallel_substitute
     else:
         subs = seq_substitute
     g = [inverse_algorithm(mapping, x, subs, debug) for x in mapping.R.gens()]
-    r = Mapping(["0"]*len(g))
-    r.F = g
-    r.n = len(g)
-    r.R = g[0].parent()
-    r.name = mapping.name+"^{-1}"
-    r.primes = []
-    r.r = 1
-    r.imaginary = mapping.imaginary
-    return r
+    return Mapping(g, mapping.name+"^{-1}", [], 1, mapping.imaginary)
