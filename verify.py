@@ -1,7 +1,7 @@
 """
 This file contains code that verifies if our program works correctly
 """
-from algorithms import algorithms, methods
+from algorithms import algorithms
 from mappings import mappings
 
 tm = ["H1", "H2", "H3", "H4", "H5", "H6", "H7", "B1"]
@@ -40,7 +40,8 @@ def verify(debug=False):
                         params={"algorithm": al, "mapping": mapping, "method": method})
                 if debug:
                     print(f"{t}")
-                assert "inverse_check_status" in t and t["inverse_check_status"] == "OK", f"ERROR for algorithm {al}({method}) for mapping {mapping}"
+                assert "inverse_check_status" in t and t["inverse_check_status"] == "OK", \
+                    f"ERROR for algorithm {al}({method}) for mapping {mapping}"
 
 
 if __name__ == '__main__':

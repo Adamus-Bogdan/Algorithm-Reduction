@@ -42,7 +42,7 @@ if __name__ == '__main__':
             metavar="METHOD",
             nargs=1,
             type=str,
-            help="Choose Groebner basis mathod for maple, default value is ''",
+            help="Choose Groebner basis method for maple, default value is ''",
             choices=maple_methods,
             default='',
             required=False
@@ -61,7 +61,8 @@ if __name__ == '__main__':
             metavar="SECONDS",
             nargs=1,
             type=int,
-            help="Timeout - how long algorithm works before it will be interrupted, default value is None - it means no limit",
+            help="Timeout - how long algorithm works before it will be interrupted, " +
+                 "default value is None - it means no limit",
             default=None,
             required=False
     )
@@ -135,4 +136,3 @@ if __name__ == '__main__':
 
             print(msg)
             log_file.write(msg + "\n")
-

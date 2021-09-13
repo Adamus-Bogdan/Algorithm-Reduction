@@ -43,35 +43,42 @@ def _algo_ff(*, mapping, debug, inversion_algorithm, results, **kwargs):
     This function inverses input mapping using ordinary improved ABCH algorithm which uses Chinese Remainder Theorem
     For more details see README.md file
     """
-    start = time()
-    # Step 1: clear denominators in input mapping 
+    start_of_all = time()
+    # Step 1: clear denominators in input mapping
     segre_mapping = mapping.segre_homotopy()
-    
+
     if mapping.r == 1:
         destination_mapping = mapping
     else:
         destination_mapping = segre_mapping
 
+    partial_times = {}
+
     map_of_coefficients = {}
     # Step 2: for every prime number p
     for p in segre_mapping.primes:
+        start_of_p = time()
         # Step 2.1: reduce mapping F modulo p
         mapping_p = segre_mapping.reduce_mapping(p)
         # Step 2.2: perform base algorithm for reduced mapping
-#         Gp = algorithm_abch.algorithm(mapping_p, debug, parallel)
+        #         Gp = algorithm_abch.algorithm(mapping_p, debug, parallel)
         g_p = inversion_algorithm(mapping_p, debug)
         # Step 2.3: transform inversion of reduced mapping into dictionary
         d_p = map2dict(g_p.F, segre_mapping.imaginary, p)
         # Step 2.4: remember the coefficients in this mapping
         map_of_coefficients = dicts_union(map_of_coefficients, d_p)
-
+        finish_of_p = time()
+        partial_times[str(p)] = finish_of_p - start_of_p
     # Step 3: Use Chinese Reminder Theory to obtain candidate for global inverse
+    start_of_crt = time()
     map_of_coefficients = fill_gaps(map_of_coefficients, mapping.primes)
     resulting_map = my_crt(map_of_coefficients)
     g = dict2map(resulting_map, destination_mapping)
-    finish = time()
-    
-    results['duration'] = finish-start
+    finish_of_crt = time()
+    finish_of_all = time()
+    partial_times['crt'] = finish_of_crt - start_of_crt
+    results['partial_durations'] = partial_times
+    results['duration'] = finish_of_all-start_of_all
     results['F'] = destination_mapping
     results['G'] = g
 
@@ -94,7 +101,7 @@ def monitor_memory_usage(*, process, memory_limit, results, timeout=1, i_val=1, 
                 process.pid,
                 interval=i_val,
                 timestamps=True,
-                timeout=timeout, 
+                timeout=timeout,
                 multiprocess=True,
                 include_children=True,
                 max_usage=True)
@@ -220,7 +227,7 @@ def algo_abch_crt_parallel(*, mapping, debug, verify, check_jacobian, timeout, m
             verify=verify,
             method='parallel',
             engine=None,
-            inversion_algorithm=lambda f, d: algorithm_abch.algorithm(mapping=f, debug=d, method='parallel'), 
+            inversion_algorithm=lambda f, d: algorithm_abch.algorithm(mapping=f, debug=d, method='parallel'),
             check_jacobian=check_jacobian,
             timeout=timeout,
             memory_limit=memory_limit,
@@ -228,10 +235,10 @@ def algo_abch_crt_parallel(*, mapping, debug, verify, check_jacobian, timeout, m
     )
 
 
-def algo_abch_crt(*, mapping, debug, verify, check_jacobian, timeout, memory_limit, params, **kwargs):
+def algo_abch_crt(*, debug, verify, check_jacobian, timeout, memory_limit, params, **kwargs):
     return run_algorithm(
             alg=_algo_ff,
-            mapping=mapping,
+            mapping=kwargs['mapping'],
             debug=debug,
             verify=verify,
             method=None,

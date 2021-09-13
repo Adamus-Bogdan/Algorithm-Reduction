@@ -6,7 +6,6 @@ See details in README.md file.
 """
 from concurrent.futures import ThreadPoolExecutor
 
-from tqdm import tqdm
 from sage.all import *
 from mapping import Mapping
 
@@ -17,7 +16,7 @@ def get_terms(p):
     :param p: n-variable polynomial
     :return: list of terms which sum to polynomial p
     """
-    return [m*c for m,c in zip(p.monomials(), p.coefficients())]
+    return [m*c for m, c in zip(p.monomials(), p.coefficients())]
 
 
 def filter_terms(p, degree_limit):
@@ -28,8 +27,9 @@ def filter_terms(p, degree_limit):
     :param degree_limit: boundary for degree
     :return: n-variable polynomial with terms of degree at most limit
     """
-    for m, c in [(m, c) for m, c in zip(p.monomials(), p.coefficients()) if m.degree() > degree_limit]:
-        p -= m*c
+    for m in p.monomials():
+        if m.degree() > degree_limit:
+            p -= m*p.monomial_coefficient(m)
     return p
 
 
@@ -59,7 +59,7 @@ def find_degrees(mapping):
     return max_d, min_d, lower_degrees
 
 
-def seq_substitute(p, mapping, degree_limit, debug):
+def seq_substitute(p, mapping, degree_limit):
     """
     This function calculates value of polynomial p for arguments defined in list F.
     This function gets only these terms which degree is at most degree_limit.
@@ -67,20 +67,12 @@ def seq_substitute(p, mapping, degree_limit, debug):
     :param p: polynomial to calculate value of
     :param mapping: object defining mapping to inverse
     :param degree_limit: maximum degree of resulting polynomial
-    :param debug: flag if function should print additional output
     :return:
     """
-    result = 0
-    terms = get_terms(p)
-    if debug:
-        terms = tqdm(terms)
-    for term in terms:
-        temp = term(mapping.F)
-        result += filter_terms(temp, degree_limit)
-    return result
+    return filter_terms(p(mapping.F), degree_limit)
 
 
-def parallel_substitute(p, mapping, degree_limit, debug):
+def parallel_substitute(p, mapping, degree_limit):
     """
     This function calculates value of polynomial p for arguments defined in list F.
     This function gets only these terms which degree is at most degree_limit.
@@ -88,12 +80,11 @@ def parallel_substitute(p, mapping, degree_limit, debug):
     :param p: polynomial to calculate value of
     :param mapping: object defining mapping to inverse
     :param degree_limit: maximum degree of resulting polynomial
-    :param debug: flag if function should print additional output
     :return:
     """
     terms = get_terms(p)
     if len(terms) < 20:
-        return seq_substitute(p, mapping, degree_limit, debug)
+        return seq_substitute(p, mapping, degree_limit)
     executor = ThreadPoolExecutor(max_workers=12)
     terms = executor.map(lambda t: t(mapping.F), terms)
     terms = executor.map(lambda t: filter_terms(t, degree_limit), terms)

@@ -206,7 +206,8 @@ ex00 = Mapping.parse([
     name="EX19",
     is_imaginary=True,
     field=GaussianIntegers().fraction_field(),
-    list_of_primes=[5305600291, 530560207, 530560183, 5305600271])
+    # list_of_primes=[530560271, 530560211, 530560207, 530560183])
+    list_of_primes=[72959, 72931, 72923, 72911, 72907, 72883, 72871, 72859])
 mappings[ex00.name] = ex00
 
 

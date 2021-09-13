@@ -25,24 +25,9 @@ def map2dict(mapping, is_imaginary, p=None):
     else:
         zz = ZZ
     if p is None:
-        return {(index, m.degrees()): [zz(c)] for index, f in enumerate(mapping)
-                for m, c in zip(f.monomials(), f.coefficients())}
+        return {(index, m): [zz(c)] for index, f in enumerate(mapping) for m, c in f.dict().items()}
     else:
-        return {(index, m.degrees()): [tuple((p, zz(c)))] for index, f in enumerate(mapping)
-                for m, c in zip(f.monomials(), f.coefficients())}
-
-
-def get_monomial(ring, a):
-    """
-    Function is used to transform tuple of exponents to monomial
-    :param ring: ring
-    :param a: tuple of exponents
-    :return:
-    """
-    result = ring("1")
-    for x, p in zip(ring.gens(), a):
-        result *= x**p
-    return result
+        return {(index, m): [(p, zz(c))] for index, f in enumerate(mapping) for m, c in f.dict().items()}
 
 
 def dict2map(input_dictionary, mapping):
@@ -55,7 +40,7 @@ def dict2map(input_dictionary, mapping):
     f = [mapping.R("0") for _ in range(mapping.n)]
     for index, k in input_dictionary:
         x = input_dictionary[(index, k)]
-        f[index] += mapping.R(str(x))*get_monomial(mapping.R, k)
+        f[index] += mapping.R({k: x})
     return Mapping(f, mapping.name+"^{-1}", mapping.R, [], 1, mapping.imaginary)
 
 
@@ -104,9 +89,10 @@ def my_crt(input_dictionary):
     :return: Dictionary in form { (i, a) => c }
     """
     result = {}
-    for k in input_dictionary:
-        mods = [t[0] for t in input_dictionary[k]]
-        rems = [t[1] for t in input_dictionary[k]]
+
+    for k, p in input_dictionary.items():
+        mods = [t[0] for t in p]
+        rems = [t[1] for t in p]
         prod_of_mods = reduce(lambda x, y: x*y, mods)
 
         temp1 = partial_crt(mods, prod_of_mods, rems, imag)
