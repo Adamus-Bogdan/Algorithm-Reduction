@@ -59,7 +59,7 @@ def find_degrees(mapping):
     return max_d, min_d, lower_degrees
 
 
-def seq_substitute(p, mapping, degree_limit):
+def seq_substitute_at_once(p, mapping, degree_limit):
     """
     This function calculates value of polynomial p for arguments defined in list F.
     This function gets only these terms which degree is at most degree_limit.
@@ -70,6 +70,13 @@ def seq_substitute(p, mapping, degree_limit):
     :return:
     """
     return filter_terms(p(mapping.F), degree_limit)
+
+
+def seq_substitute(p, mapping, degree_limit):
+    temp = 0
+    for term in get_terms(p):
+        temp += filter_terms(term(mapping.F), degree_limit)
+    return temp
 
 
 def parallel_substitute(p, mapping, degree_limit):
@@ -152,6 +159,8 @@ def algorithm(*, mapping, debug, method):
         print(str(mapping))
     if 'parallel' == method:
         subs = parallel_substitute
+    elif 'at-once' == method:
+        subs = seq_substitute_at_once
     else:
         subs = seq_substitute
     g = [inverse_algorithm(mapping, x, subs, debug) for x in mapping.R.gens()]

@@ -5,7 +5,7 @@ import textwrap
 from datetime import datetime
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from mappings import mappings
-from algorithms import algorithms, maple_methods
+from algorithms import algorithms, maple_methods, sage_methods
 
 if __name__ == '__main__':
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
             nargs=1,
             type=str,
             help="Choose Groebner basis method for maple, default value is ''",
-            choices=maple_methods,
+            choices=maple_methods + sage_methods,
             default='',
             required=False
     )

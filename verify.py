@@ -7,15 +7,15 @@ from mappings import mappings
 tm = ["H1", "H2", "H3", "H4", "H5", "H6", "H7", "B1"]
 
 mm = ["", "fgb", "maplef4", "buchberger"]
+sm = ["", "at-once", "parallel"]
 
-alg = ["GB_SAGE", "GB_SAGE_CRT", "ABCH", "ABCH_CRT", "ABCH_CRT_PARALLEL", "GB_MAPLE", "GB_MAPLE_CRT"]
+alg = ["GB_SAGE", "GB_SAGE_CRT", "ABCH", "ABCH_CRT", "GB_MAPLE", "GB_MAPLE_CRT"]
 
 mh = {
     "GB_SAGE": [""],
     "GB_SAGE_CRT": [""],
-    "ABCH": [""],
-    "ABCH_CRT": [""],
-    "ABCH_CRT_PARALLEL": [""],
+    "ABCH": sm,
+    "ABCH_CRT": sm,
     "GB_MAPLE": mm,
     "GB_MAPLE_CRT": [""]
 }
@@ -35,8 +35,8 @@ def verify(debug=False):
                         verify=True, 
                         method=method, 
                         check_jacobian=True, 
-                        timeout=120,
-                        memory_limit=4096,
+                        timeout=None,
+                        memory_limit=None,
                         params={"algorithm": al, "mapping": mapping, "method": method})
                 if debug:
                     print(f"{t}")

@@ -47,7 +47,6 @@ For details see file README.md.
 One can use one of the following algorithms:
 - `ABCH` - runs just ABCH algorithm with cutting improvement 
 - `ABCH_CRT` - runs ABCH algorithm with cutting improvement on reduced mappings
-- `ABCH_CRT_PARALLEL` - runs ABCH algorithm with cutting improvement on reduced mappings in parallel manner
 - `GB_SAGE` - runs Groebner basis based algorithm (using Sage implementation)
 - `GB_SAGE_CRT` - runs Groebner basis based algorithm (using Sage implementation) on reduced mappings
 - `GB_MAPLE` - runs Groebner basis based algorithm (using Maple implementation)
@@ -62,6 +61,10 @@ For algorithms using Maple one can also specify method (Maple has several algori
 - `direct`
 - `convert` 
 - `default`
+
+For algorithm ABCH one can specify method:
+- `parallel` - runs algorithm in parallel
+- `at-once` - performs substitution at once (by default algorithm performs substitution for each term separately)
 
 Description of each algorithm can be found in [Maple webpage](https://www.maplesoft.com/support/help/Maple/view.aspx?path=Groebner%2FBasis_algorithms).
 
