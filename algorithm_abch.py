@@ -121,7 +121,7 @@ def inverse_algorithm(mapping, x, substitute, debug):
         print(f'Maximum number of steps: {steps_limit}')
         print(f'Inversion degree boundary: {degree_limit}')
     while True:
-        p -= substitute(p, mapping, degree_limit, debug)
+        p -= substitute(p, mapping, degree_limit)
         result += p
 
         if p == 0:
