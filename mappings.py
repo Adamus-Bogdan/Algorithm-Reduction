@@ -216,5 +216,5 @@ R = PolynomialRing(GaussianIntegers().fraction_field(), ["X1", "X2", "X3", "X4",
 g = R("(((X4+I*X5)^2-1)*X1+(2*(X4+I*X5))*X2+I*((X4+I*X5)^2+1)*X3)*((2*(X4+I*X5))*X1-((X4+I*X5)^2-1)*X2)")
 H = g.gradient()
 F = [x + h for x, h in zip(R.gens(), H)]
-g = Mapping(F, "EX20", R, [3, 7, 11, 19, 23], 1, True)
+g = Mapping(F, "EX20", [3, 7, 11, 19, 23], 1, True)
 mappings[g.name] = g
