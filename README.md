@@ -63,8 +63,7 @@ For algorithms using Maple one can also specify method (Maple has several algori
 - `default`
 
 For algorithm ABCH one can specify method:
-- `parallel` - runs algorithm in parallel
-- `at-once` - performs substitution at once (by default algorithm performs substitution for each term separately)
+- `partial` - performs one substitution for each monomial separately (by default algorithm performs ona substitution for the whole polynomial)
 
 Description of each algorithm can be found in [Maple webpage](https://www.maplesoft.com/support/help/Maple/view.aspx?path=Groebner%2FBasis_algorithms).
 

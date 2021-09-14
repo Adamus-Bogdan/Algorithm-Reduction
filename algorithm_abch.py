@@ -4,8 +4,6 @@ Description of this algorithm can be found in article:
 "An effective study of polynomial maps"
 See details in README.md file.
 """
-from concurrent.futures import ThreadPoolExecutor
-
 from sage.all import *
 from mapping import Mapping
 
@@ -64,6 +62,7 @@ def seq_substitute_at_once(p, mapping, degree_limit):
     This function calculates value of polynomial p for arguments defined in list F.
     This function gets only these terms which degree is at most degree_limit.
     It uses sequential computation.
+    It performs one substitution per whole input polynomial p.
     :param p: polynomial to calculate value of
     :param mapping: object defining mapping to inverse
     :param degree_limit: maximum degree of resulting polynomial
@@ -73,29 +72,20 @@ def seq_substitute_at_once(p, mapping, degree_limit):
 
 
 def seq_substitute(p, mapping, degree_limit):
-    temp = 0
-    for term in get_terms(p):
-        temp += filter_terms(term(mapping.F), degree_limit)
-    return temp
-
-
-def parallel_substitute(p, mapping, degree_limit):
     """
     This function calculates value of polynomial p for arguments defined in list F.
     This function gets only these terms which degree is at most degree_limit.
-    It uses parallel computation.
+    It uses sequential computation.
+    It performs one substitution per each monomial in input polynomial p.
     :param p: polynomial to calculate value of
     :param mapping: object defining mapping to inverse
     :param degree_limit: maximum degree of resulting polynomial
     :return:
     """
-    terms = get_terms(p)
-    if len(terms) < 20:
-        return seq_substitute(p, mapping, degree_limit)
-    executor = ThreadPoolExecutor(max_workers=12)
-    terms = executor.map(lambda t: t(mapping.F), terms)
-    terms = executor.map(lambda t: filter_terms(t, degree_limit), terms)
-    return reduce(lambda a, b: a+b, terms, mapping.R("0"))
+    temp = 0
+    for term in get_terms(p):
+        temp += filter_terms(term(mapping.F), degree_limit)
+    return temp
 
 
 def inverse_algorithm(mapping, x, substitute, debug):
@@ -157,11 +147,9 @@ def algorithm(*, mapping, debug, method):
     """
     if debug:
         print(str(mapping))
-    if 'parallel' == method:
-        subs = parallel_substitute
-    elif 'at-once' == method:
-        subs = seq_substitute_at_once
-    else:
+    if 'partial' == method:
         subs = seq_substitute
+    else:
+        subs = seq_substitute_at_once
     g = [inverse_algorithm(mapping, x, subs, debug) for x in mapping.R.gens()]
     return Mapping(g, mapping.name+"^{-1}", [], 1, mapping.imaginary)

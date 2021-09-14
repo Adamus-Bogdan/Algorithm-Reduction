@@ -294,7 +294,7 @@ def algo_gb_maple_crt(*, mapping, debug, verify, method, check_jacobian, timeout
 
 
 maple_methods = ["", "fgb", "maplef4", "buchberger", "fglm", "walk", "direct", "convert", "default"]
-sage_methods = ["", "parallel", "at-once"]
+sage_methods = ["", "partial"]
 
 
 algorithms = {
